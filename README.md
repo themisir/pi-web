@@ -87,7 +87,7 @@ Password authentication does not encrypt the connection. Do not expose Pi Web ov
 
 ### Docker
 
-A production Docker image, Compose example, volume guidance, and GHCR publishing workflow are available. See [Running Pi Web in Docker](./docs/docker.md).
+Each release publishes an image to `ghcr.io/agegr/pi-web`. See [Running Pi Web in Docker](./docs/docker.md) for it, the Compose example and which volumes to keep.
 
 ### HTTP Proxy
 

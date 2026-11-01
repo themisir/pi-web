@@ -16,6 +16,8 @@ RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
+# What the npm package holds, as `files` in package.json: no build cache, no dev dependencies.
+RUN rm -rf .next/cache && find .next -name '*.js.map' -delete && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production \
@@ -32,7 +34,11 @@ RUN apt-get update \
     && chown -R node:node /home/node/.pi /home/node/.agents /home/node/pi-cwd
 
 WORKDIR /app
-COPY --from=build --chown=node:node /app /app
+COPY --from=build --chown=node:node /app/bin ./bin
+COPY --from=build --chown=node:node /app/.next ./.next
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/public ./public
+COPY --from=build --chown=node:node /app/next.config.ts /app/package.json ./
 USER node
 
 EXPOSE 30141

@@ -60,7 +60,7 @@ The Compose file explicitly sets the following:
 
 | Variable | Container value / requirement | Purpose |
 | --- | --- | --- |
-| `PORT` | `30141` | Internal HTTP port. Keep the Compose container port and healthcheck in sync if you change it. |
+| `PORT` | `30141` | Internal HTTP port. Keep the Compose container port in sync if you change it. |
 | `PI_WEB_HOSTNAME` | `0.0.0.0` | Required for access through the container network; Pi Web's normal non-container default is loopback-only. |
 | `PI_WEB_NO_OPEN` | `1` | Prevents attempts to open a browser in the container. |
 | `PI_CODING_AGENT_DIR` | `/home/node/.pi/agent` | Explicitly points Pi and Pi Web at the persistent agent mount; normally this defaults to `$HOME/.pi/agent`. |
@@ -90,6 +90,12 @@ Pi Web can invoke tools, run shell commands, edit project files, and access the 
 
 The mounted workspace is writable by the agent. Only mount directories you intend Pi Web to access. Keep the writable agent directory and provider credentials private.
 
-## GHCR publishing
+## Released images
 
-`.github/workflows/container.yml` builds multi-platform (`linux/amd64` and `linux/arm64`) images and pushes to `ghcr.io/<owner>/<repository>` on pushes to `main`, version tags (`v*.*.*`), and manual dispatch. It uses the built-in `GITHUB_TOKEN`; no registry password secret is needed. Ensure Actions has permission to write packages. A newly published package may be private by default; change its GHCR package visibility in GitHub if public pulls are desired.
+Pushing a `v*` release tag makes `.github/workflows/container.yml` publish `linux/amd64` and `linux/arm64` images to GHCR, next to the npm package: `ghcr.io/agegr/pi-web:<version>`, `:<major>.<minor>` and `:latest`. It uses the built-in `GITHUB_TOKEN`, so no registry secret is needed.
+
+To run a released image instead of building one, replace the `build:` section in `compose.yaml` with:
+
+```yaml
+    image: ghcr.io/agegr/pi-web:latest
+```
